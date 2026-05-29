@@ -35,6 +35,16 @@ public class WhiteboardGUI extends JFrame {
         JButton saveBtn    = new JButton("Save");
         JButton loadBtn    = new JButton("Load");
 
+        penBtn.addActionListener(e -> {canvasPanel.setTool(Tool.PEN);});
+        eraserBtn.addActionListener(e -> {canvasPanel.setTool(Tool.ERASER);});
+        textBtn.addActionListener(e -> {canvasPanel.setTool(Tool.TEXT);});
+        colorBtn.addActionListener(e -> {
+            Color c = JColorChooser.showDialog(null, "Choose color", Color.BLACK);
+            if(c!=null){
+                canvasPanel.setColor(c);
+            }
+        });
+
         toolbar.add(connectBtn);
         toolbar.add(penBtn);
         toolbar.add(eraserBtn);
