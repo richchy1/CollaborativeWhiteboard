@@ -17,6 +17,12 @@ public class CanvasPanel extends JPanel {
     Color currentColor = Color.BLACK;
     public CanvasPanel(){
         setBackground(Color.WHITE);
+
+        canvas = new BufferedImage(1200,800,BufferedImage.TYPE_INT_ARGB);
+        obj2d = (Graphics2D) canvas.getGraphics();
+        obj2d.setColor(Color.WHITE);
+        obj2d.fillRect(0,0,1200,800);
+
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 lastX = e.getX();
