@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
 
 public class CanvasPanel extends JPanel {
-    private BufferedImage canvas;
+    private final BufferedImage canvas;
     private Graphics2D obj2d;
     int lastX, lastY;
     boolean drawing = false;
