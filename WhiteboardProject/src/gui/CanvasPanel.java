@@ -24,6 +24,7 @@ public class CanvasPanel extends JPanel {
         obj2d.fillRect(0,0,1200,800);
 
         addMouseListener(new MouseAdapter() {
+
             public void mousePressed(MouseEvent e){
                 lastX = e.getX();
                 lastY = e.getY();
