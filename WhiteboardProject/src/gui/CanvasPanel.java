@@ -70,6 +70,7 @@ public class CanvasPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
+        g.drawImage(canvas,0,0,null);
     }
 
 }
