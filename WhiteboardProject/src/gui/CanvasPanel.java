@@ -62,7 +62,7 @@ public class CanvasPanel extends JPanel {
                     }
                     lastX = e.getX();
                     lastY = e.getY();
-
+                    repaint();
                 }
             }
         });
