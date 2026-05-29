@@ -73,4 +73,12 @@ public class CanvasPanel extends JPanel {
         g.drawImage(canvas,0,0,null);
     }
 
+    public void setTool(Tool t){
+        currentTool = t;
+    }
+
+    public void setColor(Color c){
+        currentColor = c;
+    }
+
 }
