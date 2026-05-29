@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WhiteboardGUI extends JFrame {
-    private CanvasPanel canvasPanel;
+    private final CanvasPanel canvasPanel;
     public WhiteboardGUI(){
         setTitle("Collaborative Whiteboard");
         setSize(1200,800);
