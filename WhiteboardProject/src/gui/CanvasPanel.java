@@ -29,6 +29,17 @@ public class CanvasPanel extends JPanel {
                 lastX = e.getX();
                 lastY = e.getY();
                 drawing = true;
+                if(currentTool == Tool.TEXT){
+                    String text = JOptionPane.showInputDialog("Enter text: ");
+                    if(text!=null && !text.isBlank()){
+                        obj2d.setColor(currentColor);
+                        obj2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);//to make the text look cleaner
+                        obj2d.setFont(new Font("SansSerif", Font.PLAIN, 16));
+                        obj2d.drawString(text, e.getX(),e.getY());
+                        repaint();
+                    }
+                    drawing = false;
+                }
             }
 
             public void mouseReleased(MouseEvent e){
