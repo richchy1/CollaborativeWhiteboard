@@ -22,9 +22,7 @@ public class WhiteboardGUI extends JFrame {
 
         userPanel.add(userLabel);
         userPanel.add(userListArea);
-
-
-
+        
         JButton connectBtn = new JButton("Connect");
         JButton penBtn     = new JButton("Pen");
         JButton eraserBtn  = new JButton("Eraser");
