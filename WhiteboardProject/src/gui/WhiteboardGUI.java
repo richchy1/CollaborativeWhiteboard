@@ -13,7 +13,7 @@ public class WhiteboardGUI extends JFrame {
         setLayout(new BorderLayout());
 
         JPanel toolbar = new JPanel();
-        CanvasPanel canvasPanel = new CanvasPanel();
+        canvasPanel = new CanvasPanel();
         JPanel userPanel = new JPanel();
         JLabel userLabel = new JLabel("Users");
         JLabel statusLabel = new JLabel("Not connected");
