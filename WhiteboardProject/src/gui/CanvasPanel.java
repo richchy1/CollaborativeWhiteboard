@@ -3,6 +3,10 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import model.Tool;
+import java.awt.BasicStroke;
+import java.awt.image.BufferedImage;
+import javax.swing.JOptionPane;
 
 public class CanvasPanel extends JPanel {
     int lastX, lastY;
