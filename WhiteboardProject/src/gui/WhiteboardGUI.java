@@ -1,5 +1,6 @@
 package gui;
 
+import model.Tool;
 import javax.swing.*;
 import java.awt.*;
 
