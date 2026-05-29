@@ -45,6 +45,7 @@ public class CanvasPanel extends JPanel {
             public void mouseReleased(MouseEvent e){
                 drawing = false;
             }
+
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e){
