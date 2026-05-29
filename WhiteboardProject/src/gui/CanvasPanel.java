@@ -13,6 +13,8 @@ public class CanvasPanel extends JPanel {
     private Graphics2D obj2d;
     int lastX, lastY;
     boolean drawing = false;
+    Tool currentTool = Tool.PEN;
+    Color currentColor = Color.BLACK;
     public CanvasPanel(){
         setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {
