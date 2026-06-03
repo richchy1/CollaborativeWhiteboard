@@ -65,7 +65,14 @@ public class CanvasPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(canvas,0,0,null);
+        BufferedImage canvas = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D obj2d = (Graphics2D) canvas.getGraphics();
+        obj2d.setColor(Color.WHITE);
+        obj2d.fillRect(0, 0, getWidth(), getHeight());
+        for (DrawingAction action : history) {
+            action.draw(obj2d);
+        }
+        g.drawImage(canvas, 0, 0, null);
     }
 
     public void setTool(Tool t){
