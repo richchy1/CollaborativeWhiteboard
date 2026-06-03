@@ -31,10 +31,8 @@ public class CanvasPanel extends JPanel {
                 if(currentTool == Tool.TEXT){
                     String text = JOptionPane.showInputDialog("Enter text: ");
                     if(text!=null && !text.isBlank()){
-                        obj2d.setColor(currentColor);
-                        obj2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);//to make the text look cleaner
-                        obj2d.setFont(new Font("SansSerif", Font.PLAIN, 16));
-                        obj2d.drawString(text, e.getX(),e.getY());
+                        DrawingAction txtact = new TextAction(e.getX(), e.getY(), text, currentColor, 16);
+                        history.add(txtact);
                         repaint();
                     }
                     drawing = false;
