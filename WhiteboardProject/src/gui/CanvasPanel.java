@@ -49,9 +49,8 @@ public class CanvasPanel extends JPanel {
             public void mouseDragged(MouseEvent e){
                 if(drawing){
                     if(currentTool == Tool.PEN){
-                        obj2d.setColor(currentColor);
-                        obj2d.setStroke(new BasicStroke(2));
-                        obj2d.drawLine(lastX,lastY,e.getX(),e.getY());
+                        DrawingAction act = new DrawLineAction(lastX, lastY, e.getX(), e.getY(), currentColor, 2);
+                        history.add(act);
                     }else if(currentTool == Tool.ERASER){
                         obj2d.setColor(Color.WHITE);
                         obj2d.setStroke(new BasicStroke(15));
