@@ -30,6 +30,7 @@ public class WhiteboardGUI extends JFrame {
         JButton colorBtn   = new JButton("Color");
         JButton undoBtn    = new JButton("Undo");
         JButton clearBtn   = new JButton("Clear");
+
         JButton saveBtn    = new JButton("Save");
         JButton loadBtn    = new JButton("Load");
 
