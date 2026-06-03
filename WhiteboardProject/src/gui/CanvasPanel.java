@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasPanel extends JPanel {
-    private final BufferedImage canvas;
-    private Graphics2D obj2d;
+    List<DrawingAction> history = new ArrayList<>();
     int lastX, lastY;
     boolean drawing = false;
     Tool currentTool = Tool.PEN;
