@@ -75,6 +75,28 @@ public class CanvasPanel extends JPanel {
         g.drawImage(canvas, 0, 0, null);
     }
 
+    public void addAction(DrawingAction a){
+        history.add(a);
+        repaint();
+    }
+
+    public void setHistory(List<DrawingAction> list){
+        this.history = new ArrayList<>(list);
+        repaint();
+    }
+
+    public void clearCanvas(){
+        history.clear();
+        repaint();
+    }
+
+    public void undoLastAction(){
+        if(!history.isEmpty()){
+            history.remove(history.size()-1);
+            repaint();
+        }
+    }
+
     public void setTool(Tool t){
         currentTool = t;
     }
