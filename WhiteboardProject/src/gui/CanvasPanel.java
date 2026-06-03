@@ -52,9 +52,8 @@ public class CanvasPanel extends JPanel {
                         DrawingAction act = new DrawLineAction(lastX, lastY, e.getX(), e.getY(), currentColor, 2);
                         history.add(act);
                     }else if(currentTool == Tool.ERASER){
-                        obj2d.setColor(Color.WHITE);
-                        obj2d.setStroke(new BasicStroke(15));
-                        obj2d.drawLine(lastX,lastY,e.getX(),e.getY());
+                        DrawingAction act = new EraseAction(lastX,lastY,e.getX(),e.getY(),15);
+                        history.add(act);
                     }
                     lastX = e.getX();
                     lastY = e.getY();
