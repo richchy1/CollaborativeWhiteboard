@@ -7,6 +7,12 @@ import model.Tool;
 import java.awt.BasicStroke;
 import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
+import model.DrawingAction;
+import model.DrawLineAction;
+import model.EraseAction;
+import model.TextAction;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CanvasPanel extends JPanel {
     private final BufferedImage canvas;
