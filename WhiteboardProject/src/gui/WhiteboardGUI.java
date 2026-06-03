@@ -43,6 +43,8 @@ public class WhiteboardGUI extends JFrame {
                 canvasPanel.setColor(c);
             }
         });
+        clearBtn.addActionListener(e -> canvasPanel.clearCanvas());
+        undoBtn.addActionListener(e -> canvasPanel.undoLastAction());
 
         toolbar.add(connectBtn);
         toolbar.add(penBtn);
