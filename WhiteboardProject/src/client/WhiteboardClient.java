@@ -1,5 +1,9 @@
 package client;
 
+import gui.WhiteboardGUI;
+import model.*;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,7 +14,14 @@ public class WhiteboardClient {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public void connect(String host, int port) {
+    private WhiteboardGUI gui;
+    private Thread receiverThread;
+
+    public WhiteboardClient(WhiteboardGUI gui) {
+        this.gui = gui;
+    }
+
+    public boolean connect(String host, int port, String username) {
         try {
             socket = new Socket(host, port);
 
@@ -19,20 +30,129 @@ public class WhiteboardClient {
 
             in = new ObjectInputStream(socket.getInputStream());
 
+            Message joinMessage = new Message(MessageType.USER_JOIN);
+            joinMessage.setUsername(username);
+            sendMessage(joinMessage);
+
+            listenForServerMessages();
+
             System.out.println("Connected to server: " + host + ":" + port);
+
+            return true;
 
         } catch (IOException e) {
             System.out.println("Connection error: " + e.getMessage());
+
+            if (gui != null) {
+                SwingUtilities.invokeLater(() ->
+                        gui.showStatus("Connection error: " + e.getMessage())
+                );
+            }
+
+            return false;
         }
     }
 
-    public void sendObject(Object object) {
+    public boolean isConnected() {
+        return socket != null && socket.isConnected() && !socket.isClosed();
+    }
+
+    public void sendAction(DrawingAction action) {
+        Message message = new Message(MessageType.ACTION, action);
+        sendMessage(message);
+    }
+
+    public void sendMessage(Message message) {
+        if (!isConnected()) {
+            if (gui != null) {
+                SwingUtilities.invokeLater(() ->
+                        gui.showStatus("Not connected to server.")
+                );
+            }
+            return;
+        }
+
         try {
-            out.writeObject(object);
+            out.writeObject(message);
             out.flush();
+            out.reset();
         } catch (IOException e) {
             System.out.println("Send error: " + e.getMessage());
+
+            if (gui != null) {
+                SwingUtilities.invokeLater(() ->
+                        gui.showStatus("Send error: " + e.getMessage())
+                );
+            }
         }
+    }
+
+    private void listenForServerMessages() {
+        receiverThread = new Thread(() -> {
+            try {
+                while (isConnected()) {
+                    Object object = in.readObject();
+
+                    if (!(object instanceof Message)) {
+                        continue;
+                    }
+
+                    Message message = (Message) object;
+                    handleMessage(message);
+                }
+
+            } catch (IOException e) {
+                System.out.println("Disconnected from server: " + e.getMessage());
+
+                if (gui != null) {
+                    SwingUtilities.invokeLater(() ->
+                            gui.showStatus("Disconnected from server.")
+                    );
+                }
+
+            } catch (ClassNotFoundException e) {
+                System.out.println("Unknown message received: " + e.getMessage());
+
+                if (gui != null) {
+                    SwingUtilities.invokeLater(() ->
+                            gui.showStatus("Invalid message from server.")
+                    );
+                }
+            } finally {
+                disconnect();
+            }
+        });
+
+        receiverThread.start();
+    }
+
+    private void handleMessage(Message message) {
+        if (gui == null || message == null || message.getType() == null) {
+            return;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            switch (message.getType()) {
+                case ACTION:
+                    gui.addAction(message.getAction());
+                    break;
+
+                case HISTORY:
+                    gui.setHistory(message.getHistory());
+                    break;
+
+                case USER_LIST:
+                    gui.updateUserList(message.getUsers());
+                    break;
+
+                case ERROR:
+                    gui.showStatus(message.getText());
+                    break;
+
+                default:
+                    break;
+            }
+        });
     }
 
     public void disconnect() {
@@ -46,11 +166,5 @@ public class WhiteboardClient {
         } catch (IOException e) {
             System.out.println("Disconnect error: " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        WhiteboardClient client = new WhiteboardClient();
-        client.connect("localhost", 5000);
-        client.sendObject("Hello from client");
     }
 }
