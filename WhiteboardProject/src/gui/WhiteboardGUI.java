@@ -18,7 +18,7 @@ public class WhiteboardGUI extends JFrame {
     private final CanvasPanel canvasPanel;
     private final JTextArea userListArea;
     private final JLabel statusLabel;
-    private JButton connectBtn, penBtn, eraserBtn, textBtn;
+    private JButton connectBtn, disconnectBtn, penBtn, eraserBtn, textBtn;
     private JButton colorBtn, undoBtn, clearBtn, saveBtn, loadBtn;
 
     private WhiteboardClient client;
@@ -53,6 +53,7 @@ public class WhiteboardGUI extends JFrame {
         clearBtn = new JButton("Clear");
         saveBtn = new JButton("Save");
         loadBtn = new JButton("Load");
+        disconnectBtn = new JButton("Disconnect");
 
         connectBtn = new JButton("Connect");
         penBtn = new JButton("Pen");
@@ -72,8 +73,10 @@ public class WhiteboardGUI extends JFrame {
         clearBtn.setEnabled(false);
         saveBtn.setEnabled(false);
         loadBtn.setEnabled(false);
+        disconnectBtn.setEnabled(false);
 
         connectBtn.addActionListener(e -> connectToServer());
+        disconnectBtn.addActionListener(e -> disconnectFromServer());
 
         penBtn.addActionListener(e -> canvasPanel.setTool(Tool.PEN));
         eraserBtn.addActionListener(e -> canvasPanel.setTool(Tool.ERASER));
@@ -160,7 +163,9 @@ public class WhiteboardGUI extends JFrame {
             }
         });
 
+
         toolbar.add(connectBtn);
+        toolbar.add(disconnectBtn);
         toolbar.addSeparator();
         toolbar.add(penBtn);
         toolbar.add(eraserBtn);
@@ -212,9 +217,36 @@ public class WhiteboardGUI extends JFrame {
             saveBtn.setEnabled(true);
             loadBtn.setEnabled(true);
             connectBtn.setEnabled(false);
+            disconnectBtn.setEnabled(true);
         } else {
             showStatus("Connection failed.");
         }
+    }
+
+    private void disconnectFromServer() {
+        if (client != null && client.isConnected()) {
+            client.disconnect();
+        }
+
+        client = null;
+        canvasPanel.setClient(null);
+        canvasPanel.clearCanvas();
+
+        userListArea.setText("");
+
+        showStatus("Disconnected.");
+
+        connectBtn.setEnabled(true);
+        disconnectBtn.setEnabled(false);
+
+        penBtn.setEnabled(false);
+        eraserBtn.setEnabled(false);
+        textBtn.setEnabled(false);
+        colorBtn.setEnabled(false);
+        undoBtn.setEnabled(false);
+        clearBtn.setEnabled(false);
+        saveBtn.setEnabled(false);
+        loadBtn.setEnabled(false);
     }
 
     public void addAction(DrawingAction action) {

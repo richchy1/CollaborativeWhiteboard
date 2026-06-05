@@ -16,6 +16,7 @@ public class WhiteboardClient {
 
     private WhiteboardGUI gui;
     private Thread receiverThread;
+    private boolean manuallyDisconnected = false;
 
     public WhiteboardClient(WhiteboardGUI gui) {
         this.gui = gui;
@@ -23,6 +24,7 @@ public class WhiteboardClient {
 
     public boolean connect(String host, int port, String username) {
         try {
+            manuallyDisconnected = false;
             socket = new Socket(host, port);
 
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -110,6 +112,12 @@ public class WhiteboardClient {
                     );
                 }
 
+                if (!manuallyDisconnected && gui != null) {
+                    SwingUtilities.invokeLater(() ->
+                            gui.showStatus("Disconnected from server.")
+                    );
+                }
+
             } catch (ClassNotFoundException e) {
                 System.out.println("Unknown message received: " + e.getMessage());
 
@@ -157,6 +165,7 @@ public class WhiteboardClient {
 
     public void disconnect() {
         try {
+            manuallyDisconnected = true;
             if (in != null) in.close();
             if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();

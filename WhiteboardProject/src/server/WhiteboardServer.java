@@ -104,6 +104,27 @@ public class WhiteboardServer {
         System.out.println("Client removed. Connected clients: " + clients.size());
     }
 
+    public void replaceHistory(List<DrawingAction> newHistory) {
+        synchronized (history) {
+            history.clear();
+
+            if (newHistory != null) {
+                history.addAll(newHistory);
+            }
+        }
+    }
+
+    public boolean undoLastAction() {
+        synchronized (history) {
+            if (!history.isEmpty()) {
+                history.remove(history.size() - 1);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static void main(String[] args) {
         WhiteboardServer server = new WhiteboardServer();
         server.start();

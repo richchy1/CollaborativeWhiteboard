@@ -76,6 +76,10 @@ public class ClientHandler extends Thread {
                 handleLoadRequest();
                 break;
 
+            case UNDO_REQUEST:
+                handleUndoRequest();
+                break;
+
             default:
                 sendError("Unsupported message type: " + type);
                 break;
@@ -83,35 +87,51 @@ public class ClientHandler extends Thread {
     }
 
     private void handleSaveRequest() {
-        java.util.List<model.DrawingAction> officialHistory = server.getHistory();
-
-        boolean success = model.WhiteboardFileManager.saveFile("server_board.wbd", officialHistory);
+        boolean success = model.WhiteboardFileManager.saveFile(
+                "server_board.wbd",
+                server.getHistory()
+        );
 
         if (success) {
-            System.out.println("Server successfully saved session file 'server_board.wbd' via request from " + username);
+            Message statusMessage = new Message(
+                    MessageType.ERROR,
+                    "Board saved successfully on server."
+            );
+
+            server.broadcast(statusMessage);
+
+            System.out.println("Board saved by " + username);
         } else {
-            sendError("Server failed to write save file.");
+            sendError("Server failed to save board.");
         }
     }
 
     private void handleLoadRequest() {
-        java.util.List<model.DrawingAction> loadedHistory = model.WhiteboardFileManager.loadFile("server_board.wbd");
+        java.util.List<model.DrawingAction> loadedHistory =
+                model.WhiteboardFileManager.loadFile("server_board.wbd");
 
-        if (loadedHistory != null) {
-            server.clearHistory();
-
-            for (model.DrawingAction action : loadedHistory) {
-                server.addAction(action);
-            }
-
-            Message refreshMessage = new Message(MessageType.HISTORY, server.getHistory());
-
-            server.broadcast(refreshMessage);
-
-            System.out.println("Server session file 'server_board.wbd' successfully loaded and broadcasted by " + username);
-        } else {
-            sendError("Failed to load server session file. Ensure the file exists on the host machine.");
+        if (loadedHistory == null) {
+            sendError("Server failed to load board. Save file not found or corrupted.");
+            return;
         }
+
+        server.replaceHistory(loadedHistory);
+
+        Message historyMessage = new Message(
+                MessageType.HISTORY,
+                server.getHistory()
+        );
+
+        server.broadcast(historyMessage);
+
+        Message statusMessage = new Message(
+                MessageType.ERROR,
+                "Board loaded successfully from server."
+        );
+
+        server.broadcast(statusMessage);
+
+        System.out.println("Board loaded by " + username);
     }
 
     private void handleUserJoin(Message message) {
@@ -156,6 +176,24 @@ public class ClientHandler extends Thread {
         server.broadcast(clearMessage);
 
         System.out.println("Whiteboard cleared by " + username);
+    }
+
+    private void handleUndoRequest() {
+        boolean success = server.undoLastAction();
+
+        if (!success) {
+            sendError("Nothing to undo.");
+            return;
+        }
+
+        Message historyMessage = new Message(
+                MessageType.HISTORY,
+                server.getHistory()
+        );
+
+        server.broadcast(historyMessage);
+
+        System.out.println("Undo performed by " + username);
     }
 
     public void sendMessage(Message message) {
