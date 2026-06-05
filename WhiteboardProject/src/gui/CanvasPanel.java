@@ -20,6 +20,7 @@ public class CanvasPanel extends JPanel {
     private int lastX;
     private int lastY;
     private boolean drawing = false;
+    private int thickness = 2;
 
     private Tool currentTool = Tool.PEN;
     private Color currentColor = Color.BLACK;
@@ -70,18 +71,9 @@ public class CanvasPanel extends JPanel {
                 DrawingAction action = null;
 
                 if (currentTool == Tool.PEN) {
-                    action = new DrawLineAction(
-                            lastX, lastY,
-                            e.getX(), e.getY(),
-                            currentColor,
-                            2
-                    );
+                    action = new DrawLineAction(lastX, lastY, e.getX(), e.getY(), currentColor, thickness);
                 } else if (currentTool == Tool.ERASER) {
-                    action = new EraseAction(
-                            lastX, lastY,
-                            e.getX(), e.getY(),
-                            15
-                    );
+                    action = new EraseAction(lastX, lastY, e.getX(), e.getY(), thickness * 6);
                 }
 
                 if (action != null) {
@@ -162,6 +154,10 @@ public class CanvasPanel extends JPanel {
         if (color != null) {
             currentColor = color;
         }
+    }
+
+    public void setThickness(int thickness) {
+        this.thickness = thickness;
     }
 
     public void setClient(WhiteboardClient client) {

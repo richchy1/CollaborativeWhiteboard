@@ -6,7 +6,6 @@ import java.util.List;
 
 public class WhiteboardFileManager {
 
-    // Changed name to saveFile and accepts String filePath to match your calls
     public static boolean saveFile(String filePath, List<DrawingAction> history) {
         if (history == null) {
             System.out.println("Save error: History list cannot be null.");
@@ -16,16 +15,16 @@ public class WhiteboardFileManager {
         File file = new File(filePath);
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(new ArrayList<>(history)); // Wrap to ensure serializable container list
+            out.writeObject(new ArrayList<>(history));
             out.flush();
-            return true; // Successfully saved
+            return true;
         } catch (IOException e) {
             System.out.println("Save error: " + e.getMessage());
-            return false; // Failed to save
+            return false;
         }
     }
 
-    // Changed name to loadFile and accepts String filePath to match your calls
+
     @SuppressWarnings("unchecked")
     public static List<DrawingAction> loadFile(String filePath) {
         File file = new File(filePath);
