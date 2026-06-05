@@ -6,24 +6,37 @@ import java.util.List;
 
 public class WhiteboardFileManager {
 
-    public static void saveHistory(File file, List<DrawingAction> history) throws IOException {
+    // Changed name to saveFile and accepts String filePath to match your calls
+    public static boolean saveFile(String filePath, List<DrawingAction> history) {
         if (history == null) {
-            throw new IllegalArgumentException("History list cannot be null.");
+            System.out.println("Save error: History list cannot be null.");
+            return false;
         }
+
+        File file = new File(filePath);
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
             out.writeObject(new ArrayList<>(history)); // Wrap to ensure serializable container list
             out.flush();
+            return true; // Successfully saved
+        } catch (IOException e) {
+            System.out.println("Save error: " + e.getMessage());
+            return false; // Failed to save
         }
     }
 
+    // Changed name to loadFile and accepts String filePath to match your calls
     @SuppressWarnings("unchecked")
-    public static List<DrawingAction> loadHistory(File file) throws IOException, ClassNotFoundException {
+    public static List<DrawingAction> loadFile(String filePath) {
+        File file = new File(filePath);
+
         if (!file.exists()) {
-            throw new FileNotFoundException("The specified save file was not found.");
+            System.out.println("Load error: The specified save file was not found.");
+            return null;
         }
         if (file.length() == 0) {
-            throw new IOException("The save file is empty or corrupted.");
+            System.out.println("Load error: The save file is empty or corrupted.");
+            return null;
         }
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
@@ -31,8 +44,12 @@ public class WhiteboardFileManager {
             if (data instanceof List) {
                 return (List<DrawingAction>) data;
             } else {
-                throw new IOException("Invalid file format: Object is not a valid whiteboard history.");
+                System.out.println("Load error: Invalid file format.");
+                return null;
             }
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Load error: " + e.getMessage());
+            return null;
         }
     }
 }

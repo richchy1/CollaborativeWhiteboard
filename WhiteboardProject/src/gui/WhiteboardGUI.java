@@ -10,6 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import model.WhiteboardFileManager;
+import java.io.File;
+
+
 public class WhiteboardGUI extends JFrame {
     private final CanvasPanel canvasPanel;
     private final JTextArea userListArea;
@@ -81,7 +85,31 @@ public class WhiteboardGUI extends JFrame {
             if (client != null && client.isConnected()) {
                 client.sendMessage(new Message(MessageType.SAVE_REQUEST));
             } else {
-                showStatus("Save works through server in multiplayer mode.");
+                // Local Mode Save Logic
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Save Whiteboard Session");
+
+                int userSelection = fileChooser.showSaveDialog(this);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    String filePath = fileToSave.getAbsolutePath();
+
+                    // Automatically append custom file extension if not present
+                    if (!filePath.toLowerCase().endsWith(".wbd")) {
+                        filePath += ".wbd";
+                    }
+
+                    // Fetch the live drawing list from our canvas
+                    java.util.List<DrawingAction> currentDrawingData = canvasPanel.getHistory();
+
+                    // Call your file manager save method
+                    boolean success = WhiteboardFileManager.saveFile(filePath, currentDrawingData);
+                    if (success) {
+                        showStatus("Board saved successfully to: " + fileToSave.getName());
+                    } else {
+                        showStatus("Error: Failed to save the board layout locally.");
+                    }
+                }
             }
         });
 
@@ -89,7 +117,24 @@ public class WhiteboardGUI extends JFrame {
             if (client != null && client.isConnected()) {
                 client.sendMessage(new Message(MessageType.LOAD_REQUEST));
             } else {
-                showStatus("Load works through server in multiplayer mode.");
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Open Whiteboard Session");
+
+                int userSelection = fileChooser.showOpenDialog(this);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToLoad = fileChooser.getSelectedFile();
+
+                    // Call your file manager load method
+                    java.util.List<DrawingAction> loadedHistory = WhiteboardFileManager.loadFile(fileToLoad.getAbsolutePath());
+
+                    if (loadedHistory != null) {
+                        // Dynamically update the canvas drawing canvas panel
+                        canvasPanel.setHistory(loadedHistory);
+                        showStatus("Board loaded successfully: " + fileToLoad.getName());
+                    } else {
+                        showStatus("Error: Could not parse or load the selected board file.");
+                    }
+                }
             }
         });
 

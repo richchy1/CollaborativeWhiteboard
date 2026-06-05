@@ -68,9 +68,49 @@ public class ClientHandler extends Thread {
                 handleClearRequest();
                 break;
 
+            case SAVE_REQUEST:
+                handleSaveRequest();
+                break;
+
+            case LOAD_REQUEST:
+                handleLoadRequest();
+                break;
+
             default:
                 sendError("Unsupported message type: " + type);
                 break;
+        }
+    }
+
+    private void handleSaveRequest() {
+        java.util.List<model.DrawingAction> officialHistory = server.getHistory();
+
+        boolean success = model.WhiteboardFileManager.saveFile("server_board.wbd", officialHistory);
+
+        if (success) {
+            System.out.println("Server successfully saved session file 'server_board.wbd' via request from " + username);
+        } else {
+            sendError("Server failed to write save file.");
+        }
+    }
+
+    private void handleLoadRequest() {
+        java.util.List<model.DrawingAction> loadedHistory = model.WhiteboardFileManager.loadFile("server_board.wbd");
+
+        if (loadedHistory != null) {
+            server.clearHistory();
+
+            for (model.DrawingAction action : loadedHistory) {
+                server.addAction(action);
+            }
+
+            Message refreshMessage = new Message(MessageType.HISTORY, server.getHistory());
+
+            server.broadcast(refreshMessage);
+
+            System.out.println("Server session file 'server_board.wbd' successfully loaded and broadcasted by " + username);
+        } else {
+            sendError("Failed to load server session file. Ensure the file exists on the host machine.");
         }
     }
 
