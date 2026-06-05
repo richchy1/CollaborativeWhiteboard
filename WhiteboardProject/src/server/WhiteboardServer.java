@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class WhiteboardServer {
-    private static final int DEFAULT_PORT = 5000;
+    private static final int DEFAULT_PORT = 9000;
 
     private ServerSocket serverSocket;
 

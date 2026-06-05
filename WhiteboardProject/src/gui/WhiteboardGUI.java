@@ -18,6 +18,8 @@ public class WhiteboardGUI extends JFrame {
     private final CanvasPanel canvasPanel;
     private final JTextArea userListArea;
     private final JLabel statusLabel;
+    private JButton connectBtn, penBtn, eraserBtn, textBtn;
+    private JButton colorBtn, undoBtn, clearBtn, saveBtn, loadBtn;
 
     private WhiteboardClient client;
 
@@ -27,7 +29,7 @@ public class WhiteboardGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel toolbar = new JPanel();
+        JToolBar toolbar = new JToolBar();
 
         canvasPanel = new CanvasPanel();
 
@@ -40,16 +42,36 @@ public class WhiteboardGUI extends JFrame {
         userPanel.add(new JScrollPane(userListArea), BorderLayout.CENTER);
 
         statusLabel = new JLabel("Not connected");
+        statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        JButton connectBtn = new JButton("Connect");
-        JButton penBtn = new JButton("Pen");
-        JButton eraserBtn = new JButton("Eraser");
-        JButton textBtn = new JButton("Text");
-        JButton colorBtn = new JButton("Color");
-        JButton undoBtn = new JButton("Undo");
-        JButton clearBtn = new JButton("Clear");
-        JButton saveBtn = new JButton("Save");
-        JButton loadBtn = new JButton("Load");
+        connectBtn = new JButton("Connect");
+        penBtn = new JButton("Pen");
+        eraserBtn = new JButton("Eraser");
+        textBtn = new JButton("Text");
+        colorBtn = new JButton("Color");
+        undoBtn = new JButton("Undo");
+        clearBtn = new JButton("Clear");
+        saveBtn = new JButton("Save");
+        loadBtn = new JButton("Load");
+
+        connectBtn = new JButton("Connect");
+        penBtn = new JButton("Pen");
+        eraserBtn = new JButton("Eraser");
+        textBtn = new JButton("Text");
+        colorBtn = new JButton("Color");
+        undoBtn = new JButton("Undo");
+        clearBtn = new JButton("Clear");
+        saveBtn = new JButton("Save");
+        loadBtn = new JButton("Load");
+
+        penBtn.setEnabled(false);
+        eraserBtn.setEnabled(false);
+        textBtn.setEnabled(false);
+        colorBtn.setEnabled(false);
+        undoBtn.setEnabled(false);
+        clearBtn.setEnabled(false);
+        saveBtn.setEnabled(false);
+        loadBtn.setEnabled(false);
 
         connectBtn.addActionListener(e -> connectToServer());
 
@@ -139,12 +161,15 @@ public class WhiteboardGUI extends JFrame {
         });
 
         toolbar.add(connectBtn);
+        toolbar.addSeparator();
         toolbar.add(penBtn);
         toolbar.add(eraserBtn);
         toolbar.add(textBtn);
         toolbar.add(colorBtn);
+        toolbar.addSeparator();
         toolbar.add(undoBtn);
         toolbar.add(clearBtn);
+        toolbar.addSeparator();
         toolbar.add(saveBtn);
         toolbar.add(loadBtn);
 
@@ -174,10 +199,19 @@ public class WhiteboardGUI extends JFrame {
         client = new WhiteboardClient(this);
         canvasPanel.setClient(client);
 
-        boolean connected = client.connect(host, 5000, username);
+        boolean connected = client.connect(host, 9000, username);
 
         if (connected) {
             showStatus("Connected as " + username);
+            penBtn.setEnabled(true);
+            eraserBtn.setEnabled(true);
+            textBtn.setEnabled(true);
+            colorBtn.setEnabled(true);
+            undoBtn.setEnabled(true);
+            clearBtn.setEnabled(true);
+            saveBtn.setEnabled(true);
+            loadBtn.setEnabled(true);
+            connectBtn.setEnabled(false);
         } else {
             showStatus("Connection failed.");
         }
